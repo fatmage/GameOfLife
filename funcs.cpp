@@ -1,11 +1,8 @@
 #include "funcs.hpp"
 
 
-
-
 gol::draw::draw(byte* board, int width, int height)
 {
-    // this->board = new int[width*height];
     this->board = board;
     this->width = width;
     this->height = height;
@@ -28,21 +25,21 @@ std::ostream& operator<<(std::ostream& out, const gol::draw& dw)
     {
         for(int x = 0; x < dw.width; x++)
         {
-#ifdef __unix___
+#ifdef __unix__
             if(dw.board[y*dw.width+x])
-                out << "\033[48;5;180m";
+                out << "\033[3;107;30m";
 
             out << "  ";
             out << "\u001b[0m";
-#endif // __unix___
+#endif // __unix__
 
-#ifndef __unix___
+#ifndef __unix__
             if(dw.board[y*dw.width+x])
                 SetConsoleTextAttribute(hConsole, BACKGROUND_INTENSITY | BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED);
 
             out << "  ";
             SetConsoleTextAttribute(hConsole, 0x7);
-#endif // __unix___
+#endif // __unix__
         }
         out << "\n";
     }
@@ -105,7 +102,7 @@ void gol::turn(byte current[], byte result[], int width, int height)
     }
 
 #ifdef __unix__
-    std::cout << "costam";
+    std::cout << "\033[H";
 #endif // __unix__
 #ifndef __unix__
     HANDLE  hConsole;
@@ -135,11 +132,16 @@ void gol::play(int width, int height)
 {
 
     // Hiding the cursor to smoothen the displaying
+    #ifndef __unix__
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_CURSOR_INFO curs;
     curs.dwSize = 100;
     curs.bVisible = FALSE;
     SetConsoleCursorInfo(hConsole, &curs);
+    #endif // __unix__
+    #ifdef __unix__
+    std::cout << "\e[?25l";
+    #endif // __unix__
 
     // Create game grids and initialize the first one with random values
     byte *board1 = new byte[width*height];
@@ -197,7 +199,7 @@ void gol::play(int width, int height)
      */
 
 #ifdef __unix__
-     std::cout<<"\u001b[2J\033[0;0H\033[0;0H";
+     std::cout << "\u001b[2J\033[0;0H\033[0;0H";
 #endif // __unix__
 #ifndef __unix__
     system("CLS");

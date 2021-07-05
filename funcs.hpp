@@ -13,6 +13,8 @@
 #define DELAY 250ms
 #define GENERATIONS 500
 
+typedef unsigned char byte;
+
 namespace gol
 {
 
